@@ -1,4 +1,5 @@
-def main():
+def main() -> None:
+    """Run the app."""
     print("Hello from mtv!")
 
 
