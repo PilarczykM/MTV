@@ -9,9 +9,17 @@ jobs:
   generate_requirements:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASER_APP_ID }}
+          private-key: ${{ secrets.RELEASER_APP_KEY }}
+      
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+  
       - name: Install UV
         uses: astral-sh/setup-uv@v5
 
@@ -21,8 +29,10 @@ jobs:
       - name: Generate requirements_dev.txt
         run: uv pip compile --output-file requirements_dev.txt pyproject.toml --group dev
 
-      - name: Commit and Push Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(ci): Update requirements files"
-          push_options: "--force-with-lease" # Recommended for preventing accidental overwrites
+      - run: |
+          git config --global user.email "releaser-bot"
+          git config --global user.name "releaser-bot"
+          git add requirements.txt
+          git add requirements_dev.txt
+          git commit -a -m "Update requirements"
+          git push origin main
