@@ -1,0 +1,28 @@
+name: Generate Requirements Files
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate_requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+
+      - name: Generate requirements.txt
+        run: uv pip compile --output-file requirements.txt pyproject.toml
+
+      - name: Generate requirements_dev.txt
+        run: uv pip compile --output-file requirements_dev.txt pyproject.toml --group dev
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(ci): Update requirements files"
+          push_options: "--force-with-lease" # Recommended for preventing accidental overwrites
