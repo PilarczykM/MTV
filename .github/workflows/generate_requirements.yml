@@ -26,3 +26,4 @@ jobs:
         with:
           commit_message: "chore(ci): Update requirements files"
           push_options: "--force-with-lease" # Recommended for preventing accidental overwrites
+          github_token: ${{ secrets.GITHUB_TOKEN }}
