@@ -5,3 +5,74 @@ description = "A dynamic, multi-page dashboard built with Plotly Dash for visual
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
+
+[dependency-groups]
+dev = ["ruff>=0.11.4"]
+
+[tool.ruff]
+include = ["*.py"]
+exclude = ["venv"]
+line-length = 120
+indent-width = 4
+target-version = "py39"
+
+[tool.ruff.lint]
+preview = true
+select = [
+    # Default base rules
+    "N", # pep8-naming: Naming conventions (e.g. class names, constants, functions)
+    "E", # pycodestyle: Error-level violations (e.g. indentation, spacing)
+    "F", # pyflakes: Logical errors (e.g. undefined names, unused imports)
+    "W", # pycodestyle: Warning-level issues (e.g. line break style)
+    "I", # isort: Import sorting and ordering
+    "D", # pydocstyle: Docstring conventions (e.g. missing docstrings)
+
+    # Extra and stricter rules
+    "UP",    # pyupgrade: Automatically modernize syntax (e.g. f-strings, type hints)
+    "ANN",   # flake8-annotations: Enforce presence of type annotations
+    "ASYNC", # flake8-async: Checks for bad async usage (e.g. async lambda)
+    "S",     # bandit: Security issues (e.g. use of `eval`, insecure hashing)
+    "BLE",   # flake8-blind-except: Avoid bare `except:` statements
+    "B",     # flake8-bugbear: Likely bugs and design problems (e.g. mutable defaults)
+    "A",     # flake8-builtins: Avoid shadowing Python built-in names
+    "COM",   # flake8-commas: Enforce consistent trailing commas
+    "CPY",   # Copyright-related checks (e.g. required license headers)
+    "C4",    # flake8-comprehensions: Simplify comprehensions
+    "EM",    # flake8-errmsg: Ensure proper formatting of exception messages
+    "G",     # flake8-logging-format: Ensure correct usage of logging format strings
+    "INP",   # flake8-no-pep420: Prevent implicit namespace packages
+    "PYI",   # Checks specific to `.pyi` stub files
+    "PT",    # flake8-pytest-style: Enforce pytest best practices
+    "Q",     # flake8-quotes: Consistent use of single/double quotes
+    "RET",   # flake8-return: Ensure consistent and correct `return` usage
+    "SLF",   # flake8-self: Warn on accessing private members (e.g. `_var`)
+    "ARG",   # flake8-unused-arguments: Detect unused function/method arguments
+    "PTH",   # flake8-pathlib: Prefer `pathlib` over `os.path`
+    "PL",    # pylint: Various optional pylint rules
+    "TRY",   # tryceratops: Anti-patterns in `try/except` blocks
+    "FLY",   # flynt: Detect places where f-strings could be used
+    "PERF",  # Perflint: Performance anti-patterns (e.g. inefficient loops)
+    "FURB",  # refurb: Suggests modern Python idioms and simplifications
+    "LOG",   # flake8-logging: Logging usage issues (e.g. wrong logger instantiation)
+    "RUF",   # Ruff-specific rules and diagnostics
+    "TID",   # tidy imports: Clean, sort, and optimize imports
+    "DTZ",   # flake8-datetimez: Enforce timezone-aware datetime usage
+    "FBT",   # flake8-boolean-trap: Prevent ambiguous function args like `foo(flag=True)`
+    "YTT",   # flake8-2020: Warn about `sys.version_info` usage that might break
+]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
