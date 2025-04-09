@@ -32,5 +32,7 @@ jobs:
       - run: |
           git config --global user.email "releaser-bot"
           git config --global user.name "releaser-bot"
-          git commit -a -m "Update requirements"
+          git add requirements.txt
+          git add requirements_dev.txt
+          git commit -m "Update requirements"
           git push origin main
