@@ -76,3 +76,4 @@ docstring-code-line-length = "dynamic"
 convention = "pep257"
 
 [tool.ruff.lint.per-file-ignores]
+"*.py" = ["D100", "CPY001"]
