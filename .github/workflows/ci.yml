@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    name: Set up with UV on Python ${{ matrix.python_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
+      - name: Run linting
+        run: make lint
