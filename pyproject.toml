@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "A dynamic, multi-page dashboard built with Plotly Dash for visualizing and analyzing time series test data from multiple sources. Supports interactive metric comparison, trace visualization, customizable tables, and state sharing."
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "dash>=3.0.2",
+    "pandas>=2.2.3",
+]
 
 [dependency-groups]
 dev = ["ruff>=0.11.4"]
@@ -76,4 +79,4 @@ docstring-code-line-length = "dynamic"
 convention = "pep257"
 
 [tool.ruff.lint.per-file-ignores]
-"*.py" = ["D100", "CPY001"]
+"*.py" = ["D100", "D104", "CPY001"]
