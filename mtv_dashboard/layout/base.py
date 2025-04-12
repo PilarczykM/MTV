@@ -1,7 +1,8 @@
 from dash import dcc, html
+from dash.development.base_component import Component
 
 
-def create_layout() -> html.Div:
+def create_layout(content: Component) -> html.Div:
     """Create base layout."""
     return html.Div(
         [
@@ -33,7 +34,7 @@ def create_layout() -> html.Div:
             html.Div(
                 [
                     dcc.Location(id="url", refresh=False),
-                    html.Div(id="page-content"),
+                    html.Div(content, id="page-content"),
                 ],
                 className="app-container",
             ),

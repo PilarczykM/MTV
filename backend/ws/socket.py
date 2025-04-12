@@ -31,6 +31,9 @@ async def broadcast(payloads: list[TestDto]) -> None:
             await client.send_json([p.model_dump() for p in payloads])
     except WebSocketDisconnect:
         disconnected.append(client)
+    except Exception as e:  # noqa: BLE001
+        print(f"Unexpected error while sending to client: {e}")
+        disconnected.append(client)
 
     for client in disconnected:
         unregister_client(client)
@@ -63,9 +66,9 @@ async def simulate_shared_tests_stream() -> None:
         test_ids[i]: {
             "test_name": f"Live Test {i + 1}",
             "test_type": "Shared",
-            "test_param_1": round(random.uniform(0.1, 1.0), 2),
-            "test_param_2": round(random.uniform(0.1, 1.0), 2),
-            "test_param_3": round(random.uniform(0.1, 1.0), 2),
+            "test_param_1": f"Param{round(random.uniform(0.1, 1.0), 2)}",
+            "test_param_2": f"Param{round(random.uniform(0.1, 1.0), 2)}",
+            "test_param_3": f"Param{round(random.uniform(0.1, 1.0), 2)}",
         }
         for i in range(num_tests)
     }
