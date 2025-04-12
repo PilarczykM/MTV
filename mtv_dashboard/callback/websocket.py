@@ -29,6 +29,13 @@ def store_ws_data(message, current_data):
             current_data[test_id][trace_name]["x"].append(time)
             current_data[test_id][trace_name]["y"].append(value)
 
+        for metric_name, value in test["metrics"].items():
+            if metric_name not in current_data[test_id]:
+                current_data[test_id][metric_name] = {"x": [], "y": []}
+
+            current_data[test_id][metric_name]["x"].append(time)
+            current_data[test_id][metric_name]["y"].append(value)
+
     return current_data
 
 
@@ -45,13 +52,13 @@ def update_graph_extend(data, graph_id, existing_figure):
     if not data or test_id not in data or not existing_figure or "data" not in existing_figure:
         return dash.no_update
 
-    traces_data = data[test_id]
+    figures_data = data[test_id]
 
     extend = {"x": [], "y": []}
-    for trace in existing_figure["data"]:
-        trace_name = trace["name"]
-        new_x = [traces_data[trace_name]["x"][-1]]
-        new_y = [traces_data[trace_name]["y"][-1]]
+    for figure in existing_figure["data"]:
+        name = figure["name"]
+        new_x = [figures_data[name]["x"][-1]]
+        new_y = [figures_data[name]["y"][-1]]
         extend["x"].append(new_x)
         extend["y"].append(new_y)
 
