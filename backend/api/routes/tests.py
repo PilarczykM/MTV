@@ -12,15 +12,15 @@ def get_repository(request: Request) -> TestRepository:
 
 
 @router.get("/tests", response_model=list[TestDto])
-def get_all_tests(repo: TestRepository = Depends(get_repository)) -> list[TestDto]:
+def get_all_tests(repo: TestRepository = Depends(get_repository)) -> list[TestDto]:  # noqa: B008
     """Return all test records from the data source."""
     return repo.get_all_tests()
 
 
 @router.get("/tests/by-id", response_model=list[TestDto])
 def get_tests_by_id(
-    test_id: list[str] = Query(...),
-    repo: TestRepository = Depends(get_repository),
+    test_id: list[str] = Query(...),  # noqa: B008
+    repo: TestRepository = Depends(get_repository),  # noqa: B008
 ) -> list[TestDto]:
     """
     Return multiple tests by a list of IDs provided as repeated query parameters.
@@ -32,8 +32,8 @@ def get_tests_by_id(
 
 @router.get("/tests/by-name", response_model=list[TestDto])
 def get_tests_by_name(
-    test_name: list[str] = Query(...),
-    repo: TestRepository = Depends(get_repository),
+    test_name: list[str] = Query(...),  # noqa: B008
+    repo: TestRepository = Depends(get_repository),  # noqa: B008
 ) -> list[TestDto]:
     """
     Return multiple tests by a list of names provided as repeated query parameters.
@@ -45,8 +45,8 @@ def get_tests_by_name(
 
 @router.get("/tests/by-type", response_model=list[TestDto])
 def get_tests_by_type(
-    test_type: list[str] = Query(...),
-    repo: TestRepository = Depends(get_repository),
+    test_type: list[str] = Query(...),  # noqa: B008
+    repo: TestRepository = Depends(get_repository),  # noqa: B008
 ) -> list[TestDto]:
     """
     Return multiple tests by a list of types provided as repeated query parameters.

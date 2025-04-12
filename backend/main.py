@@ -10,7 +10,7 @@ from backend.ws.socket import simulate_shared_tests_stream, websocket_endpoint
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):  # noqa: ANN201
     """Run lifespan."""
     simulation_task = asyncio.create_task(simulate_shared_tests_stream())
     app.state.test_repository = TestCSVRepository()

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import pandas as pd
 
@@ -46,14 +46,14 @@ class TestCSVRepository(TestRepository):
                 test_param_2=row["Test param 2"],
                 test_param_3=row["Test param 3"],
                 time_start=int(row["Time [s]"]),
-                traces={f"Trace {i}":self._sanitize_value(row[f"Trace {i}"]) for i in range(1, 11)},
+                traces={f"Trace {i}": self._sanitize_value(row[f"Trace {i}"]) for i in range(1, 11)},
                 metrics={f"Metric {i}": self._sanitize_value(row[f"Metric {i}"]) for i in range(1, 7)},
             )
             for _, row in df.iterrows()
         ]
 
     @staticmethod
-    def _sanitize_value(value: Any) -> Optional[float]:
+    def _sanitize_value(value: Optional[float | str]) -> Optional[float]:
         """Convert invalid float values to None (e.g., NaN, inf)."""
         if pd.isna(value) or value in {float("inf"), float("-inf")}:
             return None

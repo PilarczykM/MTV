@@ -53,7 +53,7 @@ async def simulate_shared_tests_stream() -> None:
 
     Each test is updated independently but sent together in a single loop.
     """
-    global last_payloads
+    global last_payloads  # noqa: PLW0603, can be fixed by creating additional class to update / get last_payload
 
     num_tests = 5
     time_counters = [0 for _ in range(num_tests)]
