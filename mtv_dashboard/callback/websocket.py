@@ -1,6 +1,7 @@
 import json
 
 import dash
+import plotly.graph_objs as go
 from dash import MATCH, Input, Output, State, callback
 
 
@@ -40,26 +41,26 @@ def store_ws_data(message, current_data):
 
 
 @callback(
-    Output({"type": "live-graph", "index": MATCH}, "extendData"),
+    Output({"type": "live-graph", "index": MATCH}, "figure"),
     Input("live-data-store", "data"),
+    Input({"type": "graph-filter", "index": MATCH}, "value"),
     State({"type": "live-graph", "index": MATCH}, "id"),
-    State({"type": "live-graph", "index": MATCH}, "figure"),
     prevent_initial_call=True,
 )
-def update_graph_extend(data, graph_id, existing_figure):
+def update_graph_filtered(data, selected_filter, graph_id):
     test_id = graph_id["index"]
-
-    if not data or test_id not in data or not existing_figure or "data" not in existing_figure:
+    if not data or test_id not in data:
         return dash.no_update
 
     figures_data = data[test_id]
+    fig = go.Figure()
 
-    extend = {"x": [], "y": []}
-    for figure in existing_figure["data"]:
-        name = figure["name"]
-        new_x = [figures_data[name]["x"][-1]]
-        new_y = [figures_data[name]["y"][-1]]
-        extend["x"].append(new_x)
-        extend["y"].append(new_y)
+    for name, trace in figures_data.items():
+        if selected_filter == "trace" and not name.startswith("Trace"):
+            continue
+        if selected_filter == "metric" and not name.startswith("Metric"):
+            continue
+        fig.add_trace(go.Scatter(x=trace["x"], y=trace["y"], mode="lines", name=name))
 
-    return extend
+    fig.update_layout(title=test_id)
+    return fig

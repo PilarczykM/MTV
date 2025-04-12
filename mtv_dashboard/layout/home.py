@@ -1,12 +1,9 @@
-import plotly.graph_objs as go
 from dash import dcc, html
 from dash_extensions import WebSocket
 
 
 def home_layout():
     test_ids = [f"T-LIVE-{i + 1:03}" for i in range(5)]
-    trace_names = [f"Trace {i}" for i in range(1, 11)]
-    metric_names = [f"Metric {i}" for i in range(1, 7)]
 
     return html.Div(
         [
@@ -17,15 +14,25 @@ def home_layout():
                 [
                     html.Div(
                         [
-                            html.H4(test_id),
+                            html.Fieldset(
+                                [
+                                    html.Legend("Select data type:"),
+                                    dcc.RadioItems(
+                                        id={"type": "graph-filter", "index": test_id},
+                                        options=[
+                                            {"label": "All", "value": "all"},
+                                            {"label": "Traces", "value": "trace"},
+                                            {"label": "Metrics", "value": "metric"},
+                                        ],
+                                        value="all",
+                                        inline=True,
+                                        className="radio-filter",
+                                    ),
+                                ],
+                                className="graph-filter-fieldset",
+                            ),
                             dcc.Graph(
                                 id={"type": "live-graph", "index": test_id},
-                                figure=go.Figure(
-                                    [
-                                        go.Scatter(x=[], y=[], mode="lines", name=name)
-                                        for name in trace_names + metric_names
-                                    ],
-                                ),
                                 config={"displayModeBar": False},
                             ),
                         ],
