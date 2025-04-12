@@ -1,7 +1,8 @@
 from dash import dcc, html
+from dash.development.base_component import Component
 
 
-def create_layout(content) -> html.Div:
+def create_layout(content: Component) -> html.Div:
     """Create base layout."""
     return html.Div(
         [

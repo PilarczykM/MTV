@@ -2,7 +2,8 @@ from dash import dcc, html
 from dash_extensions import WebSocket
 
 
-def home_layout():
+def home_layout() -> html.Div:
+    """Render home layout."""
     test_ids = [f"T-LIVE-{i + 1:03}" for i in range(5)]
 
     return html.Div(

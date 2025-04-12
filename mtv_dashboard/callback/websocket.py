@@ -4,6 +4,8 @@ import dash
 import plotly.graph_objs as go
 from dash import MATCH, Input, Output, State, callback
 
+from mtv_dashboard.types import Data
+
 
 @callback(
     Output("live-data-store", "data"),
@@ -11,7 +13,8 @@ from dash import MATCH, Input, Output, State, callback
     State("live-data-store", "data"),
     prevent_initial_call=True,
 )
-def store_ws_data(message, current_data):
+def store_ws_data(message: dict, current_data: Data) -> Data:
+    """Store websocket data."""
     payload = json.loads(message["data"])
     if current_data is None:
         current_data = {}
@@ -47,7 +50,8 @@ def store_ws_data(message, current_data):
     State({"type": "live-graph", "index": MATCH}, "id"),
     prevent_initial_call=True,
 )
-def apply_filter_to_figure(data, selected_filter, graph_id):
+def apply_filter_to_figure(data: Data, selected_filter: str, graph_id: str) -> go.Figure:
+    """Apply filter to figure."""
     test_id = graph_id["index"]
 
     if not data or test_id not in data:

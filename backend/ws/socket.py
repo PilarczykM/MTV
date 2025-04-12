@@ -26,14 +26,14 @@ async def broadcast(payloads: list[TestDto]) -> None:
     """Send the given payload to all connected clients and remove any disconnected."""
     disconnected = []
 
-    for client in connected_clients:
-        try:
+    try:
+        for client in connected_clients:
             await client.send_json([p.model_dump() for p in payloads])
-        except WebSocketDisconnect:
-            disconnected.append(client)
-        except Exception as e:
-            print(f"Unexpected error while sending to client: {e}")
-            disconnected.append(client)
+    except WebSocketDisconnect:
+        disconnected.append(client)
+    except Exception as e:  # noqa: BLE001
+        print(f"Unexpected error while sending to client: {e}")
+        disconnected.append(client)
 
     for client in disconnected:
         unregister_client(client)
