@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import pandas as pd
 
@@ -53,7 +53,7 @@ class TestCSVRepository(TestRepository):
         ]
 
     @staticmethod
-    def _sanitize_value(value: Optional[float | str]) -> Optional[float]:
+    def _sanitize_value(value: Optional[Union[float, str]]) -> Optional[float]:
         """Convert invalid float values to None (e.g., NaN, inf)."""
         if pd.isna(value) or value in {float("inf"), float("-inf")}:
             return None
