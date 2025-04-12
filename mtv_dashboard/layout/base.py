@@ -1,7 +1,7 @@
 from dash import dcc, html
 
 
-def create_layout() -> html.Div:
+def create_layout(content) -> html.Div:
     """Create base layout."""
     return html.Div(
         [
@@ -33,7 +33,7 @@ def create_layout() -> html.Div:
             html.Div(
                 [
                     dcc.Location(id="url", refresh=False),
-                    html.Div(id="page-content"),
+                    html.Div(content, id="page-content"),
                 ],
                 className="app-container",
             ),

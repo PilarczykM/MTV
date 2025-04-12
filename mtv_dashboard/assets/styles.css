@@ -6,7 +6,7 @@
 
 .header {
     background-color: #f8f9fa;
-    padding: 10px 20px;
+    padding: 10px 20px 10px 0px;
     border-bottom: 1px solid #dee2e6;
 }
 
@@ -38,9 +38,35 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1920;
+    max-width: 1920px;
     margin: 0 auto;
     padding: 0 30px;
     width: 100%;
     box-sizing: border-box;
+}
+
+#page-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#charts {
+    width: 100%;
+}
+
+.chart-box {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+#charts-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
 }

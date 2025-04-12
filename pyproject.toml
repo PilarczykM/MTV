@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "dash>=3.0.2",
+    "dash-extensions>=1.0.20",
     "fastapi>=0.115.12",
     "pandas>=2.2.3",
     "pydantic>=2.11.3",
