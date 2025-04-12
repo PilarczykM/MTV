@@ -3,10 +3,10 @@ import random
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from backend.models.websocket_payload import WebSocketPayload
+from backend.models.test_dto import TestDto
 
 connected_clients: set[WebSocket] = set()
-last_payloads: list[WebSocketPayload] = []
+last_payloads: list[TestDto] = []
 
 
 async def register_client(websocket: WebSocket) -> None:
@@ -22,7 +22,7 @@ def unregister_client(websocket: WebSocket) -> None:
     connected_clients.discard(websocket)
 
 
-async def broadcast(payloads: list[WebSocketPayload]) -> None:
+async def broadcast(payloads: list[TestDto]) -> None:
     """Send the given payload to all connected clients and remove any disconnected."""
     disconnected = []
 
@@ -80,7 +80,7 @@ async def simulate_shared_tests_stream() -> None:
             traces = {f"Trace {j}": random.uniform(0.0, 1.0) for j in range(1, 11)}
             metrics = {f"Metric {j}": random.uniform(0.0, 1.0) for j in range(1, 7)}
 
-            payload = WebSocketPayload(
+            payload = TestDto(
                 test_id=test_id,
                 test_name=meta["test_name"],
                 test_type=meta["test_type"],
