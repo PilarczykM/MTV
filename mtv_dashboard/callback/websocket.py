@@ -2,7 +2,7 @@ import json
 
 import dash
 import plotly.graph_objs as go
-from dash import MATCH, Input, Output, State, callback, no_update
+from dash import MATCH, Input, Output, State, callback
 
 
 @callback(
