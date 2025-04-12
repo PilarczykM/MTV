@@ -1,9 +1,13 @@
+import plotly.graph_objs as go
 from dash import dcc, html
 from dash_extensions import WebSocket
 
 
 def home_layout():
     test_ids = [f"T-LIVE-{i + 1:03}" for i in range(5)]
+    trace_names = [f"Trace {i}" for i in range(1, 11)]
+    metric_names = [f"Metric {i}" for i in range(1, 7)]
+    all_names = trace_names + metric_names
 
     return html.Div(
         [

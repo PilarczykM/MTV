@@ -2,7 +2,7 @@ import json
 
 import dash
 import plotly.graph_objs as go
-from dash import MATCH, Input, Output, State, callback
+from dash import MATCH, Input, Output, State, callback, no_update
 
 
 @callback(
@@ -47,8 +47,9 @@ def store_ws_data(message, current_data):
     State({"type": "live-graph", "index": MATCH}, "id"),
     prevent_initial_call=True,
 )
-def update_graph_filtered(data, selected_filter, graph_id):
+def apply_filter_to_figure(data, selected_filter, graph_id):
     test_id = graph_id["index"]
+
     if not data or test_id not in data:
         return dash.no_update
 
@@ -60,7 +61,12 @@ def update_graph_filtered(data, selected_filter, graph_id):
             continue
         if selected_filter == "metric" and not name.startswith("Metric"):
             continue
+
         fig.add_trace(go.Scatter(x=trace["x"], y=trace["y"], mode="lines", name=name))
 
-    fig.update_layout(title=test_id)
+    fig.update_layout(
+        title=test_id,
+        margin={"l": 40, "r": 20, "t": 40, "b": 40},
+        uirevision=test_id,  # <-- Keeps zoom and legend
+    )
     return fig
