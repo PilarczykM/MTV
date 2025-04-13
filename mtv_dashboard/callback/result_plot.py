@@ -7,6 +7,25 @@ from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
 @callback(
+    Output("summary-table", "columns"),
+    Input("trace-column-dropdown", "value"),
+    Input("metric-column-dropdown", "value"),
+    State("summary-table", "data"),
+)
+def update_table_columns(trace_cols: list[str], metric_cols: list[str], data: list[dict]) -> list[dict]:
+    """Update visible columns in DataTable based on selected Trace and Metric dropdowns."""
+    if not data:
+        return []
+
+    all_keys = data[0].keys()
+    static_cols = [col for col in all_keys if not col.startswith("Trace") and not col.startswith("Metric")]
+
+    visible = static_cols + (trace_cols or []) + (metric_cols or [])
+
+    return [{"name": col, "id": col} for col in visible]
+
+
+@callback(
     Output("selected-tests-plot-container", "children"),
     Input("summary-table", "derived_virtual_selected_rows"),
     # derived_virtual_data makes sure that data received is correctly shrink on filter mode.

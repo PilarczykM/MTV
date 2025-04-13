@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import dash_table, html
+from dash import dash_table, dcc, html
 
 from mtv_dashboard.layout.base import create_base_layout
 from mtv_dashboard.utils.consts import API_URL
@@ -11,22 +11,63 @@ def results_table_layout() -> html.Div:
     df = fetch_data_from_api(API_URL)
     summary = build_test_summary(df)
 
+    trace_cols = [col for col in summary.columns if col.startswith("Trace")]
+    metric_cols = [col for col in summary.columns if col.startswith("Metric")]
+
     content = html.Div(
         [
             html.H2("Test Results Summary Table"),
+            # Column selection
             html.Div(
-                dash_table.DataTable(
-                    id="summary-table",
-                    columns=[{"name": col, "id": col} for col in summary.columns],
-                    data=summary.to_dict("records"),
-                    page_size=15,
-                    filter_action="native",
-                    sort_action="native",
-                    row_selectable="multi",
-                    style_table={"overflowX": "auto"},
-                    style_cell={"textAlign": "left", "minWidth": "100px"},
-                ),
-                style={"marginTop": "20px"},
+                [
+                    html.Label(
+                        "📈 Select Trace Columns:",
+                        style={
+                            "fontWeight": "bold",
+                            "fontSize": "15px",
+                            "marginBottom": "6px",
+                            "display": "block",
+                        },
+                    ),
+                    dcc.Dropdown(
+                        id="trace-column-dropdown",
+                        options=[{"label": col, "value": col} for col in trace_cols],
+                        value=trace_cols,
+                        multi=True,
+                        placeholder="Select Trace columns",
+                        style={"width": "100%"},
+                    ),
+                    html.Label(
+                        "📊 Select Metric Columns:",
+                        style={
+                            "fontWeight": "bold",
+                            "fontSize": "15px",
+                            "marginBottom": "6px",
+                            "display": "block",
+                        },
+                    ),
+                    dcc.Dropdown(
+                        id="metric-column-dropdown",
+                        options=[{"label": col, "value": col} for col in metric_cols],
+                        value=metric_cols,
+                        multi=True,
+                        placeholder="Select Metric columns",
+                        style={"width": "100%"},
+                    ),
+                ],
+                style={"marginBottom": "20px"},
+            ),
+            # DataTable
+            dash_table.DataTable(
+                id="summary-table",
+                columns=[{"name": col, "id": col} for col in summary.columns],
+                data=summary.to_dict("records"),
+                page_size=15,
+                filter_action="native",
+                sort_action="native",
+                row_selectable="multi",
+                style_table={"overflowX": "auto"},
+                style_cell={"textAlign": "left", "minWidth": "100px"},
             ),
             html.Div(id="selected-tests-plot-container"),
         ],
