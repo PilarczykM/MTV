@@ -8,14 +8,14 @@ import pandas as pd
 @callback(
     Output("selected-tests-plot-container", "children"),
     Input("summary-table", "derived_virtual_selected_rows"),
-    State("summary-table", "data"),
+    State("summary-table", "derived_virtual_data"), # !derived_virtual_data makes sure that data received is correctly shrink on filter mode.
 )
-def display_selected_tests(selected_rows: list[int], all_rows: list[dict]) -> list:
+def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -> list:
     """Render trace plots and metrics for selected tests."""
-    if not selected_rows:
+    if not selected_rows or not visible_data:
         return []
 
-    selected_ids = [all_rows[i]["test_id"] for i in selected_rows]
+    selected_ids = [visible_data[i]["test_id"] for i in selected_rows]
 
     df = fetch_data_from_api(API_URL)
     df = df.rename(columns=str.lower)
@@ -58,7 +58,6 @@ def display_selected_tests(selected_rows: list[int], all_rows: list[dict]) -> li
             height=400,
         )
 
-        # Metric display
         metric_row = test_data.iloc[0][metric_cols]
         metric_table = dash_table.DataTable(
             columns=[{"name": "Metric", "id": "Metric"}, {"name": "Value", "id": "Value"}],
