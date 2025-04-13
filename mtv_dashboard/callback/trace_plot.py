@@ -1,7 +1,7 @@
 import urllib
 
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, ClientsideFunction
+from dash import ClientsideFunction, Dash, Input, Output, callback
 from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
@@ -22,6 +22,7 @@ def update_url(test_names: list[str], traces: list[str]) -> str:
         "traces": ",".join(traces) if traces else "",
     }
     return f"?{urllib.parse.urlencode(query)}"
+
 
 @callback(
     Output("test-name-dropdown", "value"),
@@ -108,10 +109,12 @@ def update_trace_plot(selected_test_names: list[str], selected_traces: list[str]
 
     return fig
 
-def register_clientside_callbacks(app):
+
+def register_clientside_callbacks(app: Dash) -> None:
+    """Register client side callback."""
     app.clientside_callback(
         ClientsideFunction(namespace="clipboard", function_name="copyUrlToClipboard"),
         Output("copy-confirmation", "children"),
         Input("copy-url-button", "n_clicks"),
-        prevent_initial_call=True
+        prevent_initial_call=True,
     )

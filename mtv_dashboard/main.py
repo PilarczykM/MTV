@@ -1,4 +1,4 @@
-from dash import Dash, ClientsideFunction
+from dash import Dash
 
 from mtv_dashboard.callback import websocket  # noqa: F401
 from mtv_dashboard.callback.trace_plot import register_clientside_callbacks
