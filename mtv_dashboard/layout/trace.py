@@ -1,5 +1,6 @@
 from dash import dcc, html
 
+from mtv_dashboard.components.share_link import share_link
 from mtv_dashboard.layout.base import create_base_layout
 
 
@@ -11,18 +12,7 @@ def trace_layout() -> html.Div:
             html.Div(
                 [
                     html.H2("Trace Plot Page"),
-                    html.Div(
-                        [
-                            html.Button(
-                                ["📋", " Copy URL"],
-                                id="copy-url-button",
-                                title="Click to copy the current URL and share it",
-                                style={"fontSize": "12px", "padding": "2px 4px"},
-                            ),
-                            html.Div(id="copy-confirmation", style={"color": "green", "marginTop": "10px"}),
-                        ],
-                        style={"margin-bottom": "20px"},
-                    ),
+                    share_link()
                 ],
                 style={"display": "flex", "gap": "20px"},
             ),
