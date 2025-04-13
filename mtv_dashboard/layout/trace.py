@@ -7,7 +7,25 @@ def trace_layout() -> html.Div:
     """Return trace layout."""
     content = html.Div(
         [
-            html.H2("Trace Plot Page"),
+            dcc.Location(id="url", refresh=False),
+            html.Div(
+                [
+                    html.H2("Trace Plot Page"),
+                    html.Div(
+                        [
+                            html.Button(
+                                ["📋", " Copy URL"],
+                                id="copy-url-button",
+                                title="Click to copy the current URL and share it",
+                                style={"fontSize": "12px", "padding": "2px 4px"},
+                            ),
+                            html.Div(id="copy-confirmation", style={"color": "green", "marginTop": "10px"}),
+                        ],
+                        style={"margin-bottom": "20px"},
+                    ),
+                ],
+                style={"display": "flex", "gap": "20px"},
+            ),
             html.Div(
                 [
                     html.Label("Select tests:"),
@@ -18,7 +36,7 @@ def trace_layout() -> html.Div:
                         placeholder="Select tests to compare",
                     ),
                 ],
-                style={"margin-bottom": "20px"},
+                style={"marginBottom": "20px"},
             ),
             html.Div(
                 [
@@ -27,10 +45,10 @@ def trace_layout() -> html.Div:
                         id="trace-checklist",
                         options=[{"label": f"Trace {i}", "value": f"Trace {i}"} for i in range(1, 11)],
                         value=["Trace 1"],
-                        labelStyle={"display": "inline-block", "margin-right": "10px"},
+                        labelStyle={"display": "inline-block", "marginRight": "10px"},
                     ),
                 ],
-                style={"margin-bottom": "20px"},
+                style={"marginBottom": "20px"},
             ),
             dcc.Graph(id="trace-plot"),
         ],
