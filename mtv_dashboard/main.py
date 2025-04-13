@@ -1,7 +1,6 @@
 from dash import Dash
 
 from mtv_dashboard.callback import websocket  # noqa: F401
-from mtv_dashboard.layout.home import home_layout
 
 app = Dash(__name__, suppress_callback_exceptions=True, title="MTV", use_pages=True)
 server = app.server

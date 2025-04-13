@@ -18,8 +18,7 @@ def fetch_data_from_api(api_url: str) -> pd.DataFrame:
         trace_df = pd.json_normalize(df["traces"])
         metrics_df = pd.json_normalize(df["metrics"])
         df = pd.concat([df.drop(columns=["traces"]), trace_df], axis=1)
-        df = pd.concat([df.drop(columns=["metrics"]), metrics_df], axis=1)
-        return df
+        return pd.concat([df.drop(columns=["metrics"]), metrics_df], axis=1)
     except requests.HTTPError as e:
         print(f"Error while fetching data from API ({api_url}): {e}")
         return pd.DataFrame()

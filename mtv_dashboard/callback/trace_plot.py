@@ -3,7 +3,7 @@ from dash import Input, Output, callback
 from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
-import pandas as pd
+
 API_URL = "http://localhost:8000/tests"
 
 
@@ -11,7 +11,7 @@ API_URL = "http://localhost:8000/tests"
     Output("test-name-dropdown", "options"),
     Input("trace-checklist", "id"),
 )
-def populate_test_name_dropdown(_):
+def populate_test_name_dropdown(_) -> list[dict[str, str]]:  # noqa: ANN001
     """Populate the Test Name dropdown with available test names."""
     df = fetch_data_from_api(API_URL)
     unique_test_names = df["test_name"].dropna().unique()
@@ -23,7 +23,7 @@ def populate_test_name_dropdown(_):
     Input("test-name-dropdown", "value"),
     Input("trace-checklist", "value"),
 )
-def update_trace_plot(selected_test_names, selected_traces) -> BaseFigure:
+def update_trace_plot(selected_test_names: list[str], selected_traces: list[str]) -> BaseFigure:
     """Update the trace plot based on selected test names and trace signals."""
     if not selected_test_names or not selected_traces:
         return go.Figure()
@@ -54,7 +54,7 @@ def update_trace_plot(selected_test_names, selected_traces) -> BaseFigure:
                         x=time,
                         y=values,
                         mode="lines",
-                        name=f"{test_name} – {trace}",
+                        name=f"{test_name} - {trace}",
                         hovertemplate=(
                             "Time: %{x}<br>"
                             "Value: %{y:.2f}<br>"
