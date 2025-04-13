@@ -66,7 +66,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # 2. Install dependencies
-pip install -r requirements.txt
+pip install -r requirements_dev.txt
 
 # 3. Run backend
 python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
@@ -84,7 +84,7 @@ python -m venv venv
 venv\Scripts\activate
 
 # 2. Install dependencies
-pip install -r requirements.txt
+pip install -r requirements_dev.txt
 
 # 3. Run backend
 python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
@@ -102,6 +102,10 @@ python -m mtv_dashboard.main
 # 1. Create virtual environment using UV and install dependencies
 
 uv sync
+
+# 2. Run backend and frontend parallel
+
+uv run uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000 & uv run -m mtv_dashboard.main
 ```
 
 ---
