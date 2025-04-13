@@ -1,14 +1,16 @@
+import pandas as pd
 import plotly.graph_objects as go
-from dash import callback, Output, Input, State, dcc, html, dash_table
+from dash import Input, Output, State, callback, dash_table, dcc, html
 
 from mtv_dashboard.utils.consts import API_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
-import pandas as pd
+
 
 @callback(
     Output("selected-tests-plot-container", "children"),
     Input("summary-table", "derived_virtual_selected_rows"),
-    State("summary-table", "derived_virtual_data"), # !derived_virtual_data makes sure that data received is correctly shrink on filter mode.
+    # derived_virtual_data makes sure that data received is correctly shrink on filter mode.
+    State("summary-table", "derived_virtual_data"),
 )
 def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -> list:
     """Render trace plots and metrics for selected tests."""
@@ -44,10 +46,8 @@ def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -
                     y=test_data[trace],
                     mode="lines",
                     name=trace,
-                    hovertemplate=(
-                        f"{trace}<br>Time: %{{x}}<br>Value: %{{y:.2f}}<extra></extra>"
-                    ),
-                )
+                    hovertemplate=(f"{trace}<br>Time: %{{x}}<br>Value: %{{y:.2f}}<extra></extra>"),
+                ),
             )
 
         fig.update_layout(
@@ -62,9 +62,7 @@ def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -
         metric_table = dash_table.DataTable(
             columns=[{"name": "Metric", "id": "Metric"}, {"name": "Value", "id": "Value"}],
             data=[
-                {"Metric": metric, "Value": f"{value:.2f}"}
-                for metric, value in metric_row.items()
-                if pd.notna(value)
+                {"Metric": metric, "Value": f"{value:.2f}"} for metric, value in metric_row.items() if pd.notna(value)
             ],
             style_table={"width": "300px"},
             style_cell={
@@ -79,14 +77,6 @@ def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -
             },
         )
 
-        plots.append(
-            html.Div([
-                dcc.Graph(figure=fig),
-                html.H5(f"Metrics for {test_name}"),
-                metric_table,
-                html.Hr()
-            ])
-        )
+        plots.append(html.Div([dcc.Graph(figure=fig), html.H5(f"Metrics for {test_name}"), metric_table, html.Hr()]))
 
     return plots
-
