@@ -7,6 +7,7 @@ def trace_layout() -> html.Div:
     """Return trace layout."""
     content = html.Div(
         [
+            dcc.Location(id="url", refresh=False),
             html.H2("Trace Plot Page"),
             html.Div(
                 [
@@ -18,7 +19,7 @@ def trace_layout() -> html.Div:
                         placeholder="Select tests to compare",
                     ),
                 ],
-                style={"margin-bottom": "20px"},
+                style={"marginBottom": "20px"},
             ),
             html.Div(
                 [
@@ -27,10 +28,10 @@ def trace_layout() -> html.Div:
                         id="trace-checklist",
                         options=[{"label": f"Trace {i}", "value": f"Trace {i}"} for i in range(1, 11)],
                         value=["Trace 1"],
-                        labelStyle={"display": "inline-block", "margin-right": "10px"},
+                        labelStyle={"display": "inline-block", "marginRight": "10px"},
                     ),
                 ],
-                style={"margin-bottom": "20px"},
+                style={"marginBottom": "20px"},
             ),
             dcc.Graph(id="trace-plot"),
         ],

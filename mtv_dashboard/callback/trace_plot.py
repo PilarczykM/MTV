@@ -1,10 +1,44 @@
+import urllib
+
 import plotly.graph_objects as go
-from dash import Input, Output, callback
+from dash import Input, Output, State, callback
 from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 API_URL = "http://localhost:8000/tests"
+
+
+@callback(
+    Output("url", "search", allow_duplicate=True),
+    Input("test-name-dropdown", "value"),
+    Input("trace-checklist", "value"),
+    prevent_initial_call="initial_duplicate",
+)
+def update_url(test_names: list[str], traces: list[str]) -> str:
+    """Encode the selected filters into the URL query string."""
+    query = {
+        "tests": ",".join(test_names) if test_names else "",
+        "traces": ",".join(traces) if traces else "",
+    }
+    return f"?{urllib.parse.urlencode(query)}"
+
+
+@callback(
+    Output("test-name-dropdown", "value"),
+    Output("trace-checklist", "value"),
+    Input("url", "search"),
+    Input("test-name-dropdown", "options"),
+)
+def sync_inputs_with_url(search: str, test_options: list[dict]) -> tuple[list[str], list[str]]:
+    """Decode the query string and update the filter components."""
+    if not search or not test_options:
+        return [], ["Trace 1"]
+
+    parsed = urllib.parse.parse_qs(search.lstrip("?"))
+    tests = parsed.get("tests", [""])[0].split(",") if parsed.get("tests") else []
+    traces = parsed.get("traces", [""])[0].split(",") if parsed.get("traces") else []
+    return tests, traces
 
 
 @callback(
@@ -67,7 +101,10 @@ def update_trace_plot(selected_test_names: list[str], selected_traces: list[str]
                 )
 
     fig.update_layout(
-        title="Trace signals over time", xaxis_title="Time [s]", yaxis_title="Value", template="plotly_white",
+        title="Trace signals over time",
+        xaxis_title="Time [s]",
+        yaxis_title="Value",
+        template="plotly_white",
     )
 
     return fig
