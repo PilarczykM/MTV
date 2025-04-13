@@ -2,10 +2,11 @@ from dash import dcc, html
 from dash.development.base_component import Component
 
 
-def create_layout(content: Component) -> html.Div:
+def create_base_layout(content: Component) -> html.Div:
     """Create base layout."""
     return html.Div(
         [
+            dcc.Location(id="url", refresh=False),
             html.Div(
                 [
                     html.Div(
@@ -19,7 +20,7 @@ def create_layout(content: Component) -> html.Div:
                             ),
                             html.Div(
                                 [
-                                    dcc.Link("Trace", href="*", className="nav-link"),
+                                    dcc.Link("Trace", href="/trace", className="nav-link"),
                                     dcc.Link("Metric", href="*", className="nav-link"),
                                     dcc.Link("Tabele", href="*", className="nav-link"),
                                 ],
@@ -33,7 +34,6 @@ def create_layout(content: Component) -> html.Div:
             ),
             html.Div(
                 [
-                    dcc.Location(id="url", refresh=False),
                     html.Div(content, id="page-content"),
                 ],
                 className="app-container",
