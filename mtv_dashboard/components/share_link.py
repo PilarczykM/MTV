@@ -1,6 +1,8 @@
 from dash import html
 
-def share_link():
+
+def share_link() -> html.Div:
+    """Return share link component."""
     return html.Div(
         [
             html.Button(

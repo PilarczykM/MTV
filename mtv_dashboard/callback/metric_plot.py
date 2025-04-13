@@ -2,6 +2,7 @@ import urllib
 
 import plotly.graph_objects as go
 from dash import Input, Output, callback, html
+from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.consts import API_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
@@ -20,6 +21,7 @@ def update_url(test_names: list[str], metrics: list[str]) -> str:
         "metrics": ",".join(metrics) if metrics else "",
     }
     return f"?{urllib.parse.urlencode(query)}"
+
 
 @callback(
     Output("metrics-test-dropdown", "value"),
@@ -42,10 +44,12 @@ def sync_inputs_with_url(search: str, test_options: list[dict]) -> tuple[list[st
     Output("metrics-test-dropdown", "options"),
     Input("metrics-checklist", "id"),
 )
-def populate_metric_test_dropdown(_):
+def populate_metric_test_dropdown(_) -> dict:  # noqa: ANN001
+    """Populate metrics tests into dropdown."""
     df = fetch_data_from_api(API_URL)
     unique_names = df["test_name"].dropna().unique()
     return [{"label": name, "value": name} for name in sorted(unique_names)]
+
 
 @callback(
     Output("metrics-plot", "figure"),
@@ -53,7 +57,8 @@ def populate_metric_test_dropdown(_):
     Input("metrics-test-dropdown", "value"),
     Input("metrics-checklist", "value"),
 )
-def update_metrics_plot(selected_tests, selected_metrics):
+def update_metrics_plot(selected_tests: list[str], selected_metrics: list[str]) -> BaseFigure:
+    """Update metrics plot for selected tests and metrics."""
     if not selected_tests or not selected_metrics:
         return go.Figure(), ""
 
@@ -71,12 +76,14 @@ def update_metrics_plot(selected_tests, selected_metrics):
             test_id = test_id_map.get(test)
             val = filtered.loc[filtered["test_id"] == test_id, metric].mean()
 
-            fig.add_trace(go.Bar(
-                x=[metric],
-                y=[val],
-                name=test,
-                offsetgroup=test,
-            ))
+            fig.add_trace(
+                go.Bar(
+                    x=[metric],
+                    y=[val],
+                    name=test,
+                    offsetgroup=test,
+                ),
+            )
 
             if i == 0:
                 reference = val
@@ -86,12 +93,12 @@ def update_metrics_plot(selected_tests, selected_metrics):
                 diff_info.append(
                     html.Div(
                         f"{test} vs {selected_tests[0]} ({metric}): {diff:+.1f}%",
-                        style={"color": color, "fontWeight": "bold"}
-                    )
+                        style={"color": color, "fontWeight": "bold"},
+                    ),
                 )
 
     fig.update_layout(
-        barmode='group',
+        barmode="group",
         title="Metrics Comparison",
         yaxis_title="Metric Value",
         template="plotly_white",

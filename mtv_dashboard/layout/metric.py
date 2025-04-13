@@ -12,7 +12,7 @@ def metrics_layout() -> html.Div:
             html.Div(
                 [
                     html.H2("Metrics Comparison Page"),
-                    share_link()
+                    share_link(),
                 ],
                 style={"display": "flex", "gap": "20px"},
             ),

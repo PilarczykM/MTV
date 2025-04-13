@@ -12,7 +12,7 @@ def trace_layout() -> html.Div:
             html.Div(
                 [
                     html.H2("Trace Plot Page"),
-                    share_link()
+                    share_link(),
                 ],
                 style={"display": "flex", "gap": "20px"},
             ),

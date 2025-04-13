@@ -1,4 +1,4 @@
-from dash import Dash, ClientsideFunction, Output, Input
+from dash import ClientsideFunction, Dash, Input, Output
 
 
 def register_clientside_callbacks(app: Dash) -> None:
