@@ -13,5 +13,5 @@ def share_link() -> html.Div:
             ),
             html.Div(id="copy-confirmation", style={"color": "green", "marginTop": "10px"}),
         ],
-        style={"margin-bottom": "20px"},
+        style={"marginBottom": "20px"},
     )
