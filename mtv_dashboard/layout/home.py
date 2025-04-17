@@ -38,6 +38,7 @@ def home_layout() -> html.Div:
                                 dcc.Graph(
                                     id={"type": "live-graph", "index": test_id},
                                     config={"displayModeBar": False},
+                                    className="live-graph",
                                 ),
                             ],
                             className="chart-box",
