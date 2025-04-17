@@ -10,6 +10,14 @@ This project was created as a prototype to demonstrate key features of a robust 
 
 - [MTV – Multi Test Viewer](#mtv--multi-test-viewer)
   - [📚 Table of Contents](#-table-of-contents)
+  - [🖼️ Dashboard Previews](#️-dashboard-previews)
+    - [🔹 Home View](#-home-view)
+      - [📈 Metric Selection and Graph Type Toggle](#-metric-selection-and-graph-type-toggle)
+      - [🔄 Real-Time WebSocket Execution Flow](#-real-time-websocket-execution-flow)
+    - [📉 Trace Page](#-trace-page)
+    - [📈 Metrics Page](#-metrics-page)
+    - [🧾 Table Page](#-table-page)
+    - [🧾 Charts Below Table View](#-charts-below-table-view)
   - [✨ Key Features](#-key-features)
   - [🔧 Technologies](#-technologies)
   - [🚀 Getting Started](#-getting-started)
@@ -20,6 +28,38 @@ This project was created as a prototype to demonstrate key features of a robust 
   - [🛠️ TODO](#️-todo)
 
 ---
+
+## 🖼️ Dashboard Previews
+Below are screenshots demonstrating key views and functionalities of the Multi Test Viewer Dashboard, built with Plotly Dash. The dashboard supports real-time test data visualization, trace and metric analysis, and interactive test filtering.
+
+### 🔹 Home View
+Simulates live test execution using WebSocket communication. Visual indicators update in real-time, reflecting incoming test data streams.
+![Home page](./images/home-view.png)
+
+#### 📈 Metric Selection and Graph Type Toggle
+Users can interactively select which test metrics to display, and switch between various graph types (e.g., line, bar) for flexible data analysis.
+![Selected metrics presentation](./images/select-view-option.png)
+
+#### 🔄 Real-Time WebSocket Execution Flow
+A dynamic flow diagram visualizes the lifecycle of test execution, showcasing the flow of messages and test phases in real time.
+![flow diagram](./images/websocket-flow-diagram.png)
+
+### 📉 Trace Page
+Visualizes time-series traces from selected test cases. Supports overlaying multiple traces on a single plot, with interactive tooltips showing statistical summaries (avg, std, min, max).
+![Trace page](./images/trace-page.png)
+
+### 📈 Metrics Page
+Displays metric results across tests. Under each graph, a summary section aggregates the selected tests for quick comparison. Users can compare multiple metrics simultaneously and see relative performance.
+![Metric page](./images/metrics-page.png)
+
+### 🧾 Table Page
+Provides a comprehensive table summarizing test results, including parameters, trace statistics, and metric values. Clicking a row displays corresponding charts below the table.
+![Table page](./images/table-page.png)
+
+### 🧾 Charts Below Table View
+When one or more tests are selected from the table, their data is visualized directly below, enabling focused analysis of selected results.
+![Table view](./images/table-view.png)
+
 
 ## ✨ Key Features
 
@@ -113,7 +153,7 @@ uv run uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000 & uv run -
 ## 🛠️ TODO
 
 - [ ] Connect WebSocket **only** on the home page to reduce overhead.
-- [ ] Adjust chart dimensions – current layout renders them too small.
+- [x] Adjust chart dimensions – current layout renders them too small.
 - [ ] Improve sharable link mechanism:
   - [x] **Current:** Populate charts using route path parameters.
   - [ ] **Planned:** Store chart state in a database and generate a short sharable link that maps to saved data.
