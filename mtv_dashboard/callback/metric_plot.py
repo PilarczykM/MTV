@@ -1,9 +1,11 @@
 import urllib.parse
+from json import JSONDecodeError
 
 import plotly.graph_objects as go
 import requests
 from dash import Input, Output, State, callback, dash, html
 from dash.exceptions import PreventUpdate
+from fastapi.responses import JSONResponse
 from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.consts import API_URL
@@ -16,6 +18,7 @@ from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
     Input("metrics-checklist", "value"),
 )
 def update_dashboard_state(test_names: list[str], metrics: list[str]) -> dict:
+    """Update dashboard state."""
     return {
         "source": "metrics",
         "tests": test_names,
@@ -30,13 +33,14 @@ def update_dashboard_state(test_names: list[str], metrics: list[str]) -> dict:
     State("dashboard-state", "data"),
     prevent_initial_call=True,
 )
-def copy_shareable_link(n_clicks: int, state: dict) -> tuple[str, str]:
+def copy_shareable_link(n_clicks: int, state: dict) -> tuple[str, str]:  # noqa: ARG001
+    """Copy sharable link."""
     try:
-        response = requests.post("http://localhost:8000/state", json=state)
+        response = requests.post("http://localhost:8000/state", json=state, timeout=1000)
         response.raise_for_status()
         hash_ = response.json()["state_hash"]
         url = f"?state={hash_}"
-    except Exception as e:
+    except requests.HTTPError as e:
         return "", f"❌ Error: {e!s}"
 
     return url, "✅ Link copied!"
@@ -47,8 +51,8 @@ def copy_shareable_link(n_clicks: int, state: dict) -> tuple[str, str]:
     Input("url", "search"),
     prevent_initial_call=True,
 )
-def load_state_from_url(search: str):
-    """"""
+def load_state_from_url(search: str) -> JSONResponse:
+    """Load state from url."""
     if not search or not search.startswith("?state="):
         raise PreventUpdate
 
@@ -60,7 +64,7 @@ def load_state_from_url(search: str):
         response = requests.get(f"http://localhost:8000/state/{hash_}", timeout=1000)
         response.raise_for_status()
         return response.json()
-    except Exception:
+    except (requests.HTTPError, JSONDecodeError):
         return dash.no_update
 
 
@@ -72,7 +76,7 @@ def load_state_from_url(search: str):
     State("dashboard-state", "data"),
     State("state-loaded", "data"),
 )
-def apply_loaded_state(options: list[dict], state: dict, already_loaded: bool):  # noqa: FBT001
+def apply_loaded_state(options: list[dict], state: dict, already_loaded: bool) -> list:  # noqa: FBT001
     """Apply loaded state."""
     if not options or not state or already_loaded:
         raise PreventUpdate
