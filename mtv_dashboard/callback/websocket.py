@@ -6,6 +6,27 @@ from dash import MATCH, Input, Output, State, callback
 
 from mtv_dashboard.types import Data
 
+# Rolling window size - number of points to keep per series
+ROLLING_WINDOW = 15
+
+
+def append_with_rolling(
+    data_dict: dict,
+    series_name: str,
+    time: int,
+    value: int,
+    max_len: int = ROLLING_WINDOW,
+) -> None:
+    """Append data point and enforce rolling window limit."""
+    if series_name not in data_dict:
+        data_dict[series_name] = {"x": [], "y": []}
+    series = data_dict[series_name]
+    series["x"].append(time)
+    series["y"].append(value)
+    if len(series["x"]) > max_len:
+        series["x"] = series["x"][-max_len:]
+        series["y"] = series["y"][-max_len:]
+
 
 @callback(
     Output("live-data-store", "data"),
@@ -14,7 +35,7 @@ from mtv_dashboard.types import Data
     prevent_initial_call=True,
 )
 def store_ws_data(message: dict, current_data: Data) -> Data:
-    """Store websocket data."""
+    """Store websocket data with rolling window."""
     payload = json.loads(message["data"])
     if current_data is None:
         current_data = {}
@@ -27,18 +48,10 @@ def store_ws_data(message: dict, current_data: Data) -> Data:
             current_data[test_id] = {}
 
         for trace_name, value in test["traces"].items():
-            if trace_name not in current_data[test_id]:
-                current_data[test_id][trace_name] = {"x": [], "y": []}
-
-            current_data[test_id][trace_name]["x"].append(time)
-            current_data[test_id][trace_name]["y"].append(value)
+            append_with_rolling(current_data[test_id], trace_name, time, value)
 
         for metric_name, value in test["metrics"].items():
-            if metric_name not in current_data[test_id]:
-                current_data[test_id][metric_name] = {"x": [], "y": []}
-
-            current_data[test_id][metric_name]["x"].append(time)
-            current_data[test_id][metric_name]["y"].append(value)
+            append_with_rolling(current_data[test_id], metric_name, time, value)
 
     return current_data
 
@@ -71,6 +84,6 @@ def apply_filter_to_figure(data: Data, selected_filter: str, graph_id: str) -> g
     fig.update_layout(
         title=test_id,
         margin={"l": 40, "r": 20, "t": 40, "b": 40},
-        uirevision=test_id,  # <-- Keeps zoom and legend
+        uirevision=test_id,
     )
     return fig
