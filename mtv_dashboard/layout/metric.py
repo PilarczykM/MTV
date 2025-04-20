@@ -8,7 +8,10 @@ def metrics_layout() -> html.Div:
     """Return metrics layout."""
     content = html.Div(
         [
+            dcc.Store(id="dashboard-state"),
+            dcc.Store(id="state-loaded", data=False),
             dcc.Location(id="url", refresh=False),
+            html.Div(id="copy-confirmation"),
             html.Div(
                 [
                     html.H2("Metrics Comparison Page"),
@@ -28,7 +31,6 @@ def metrics_layout() -> html.Div:
                 ],
                 style={"marginBottom": "20px"},
             ),
-
             html.Div(
                 [
                     html.Label("Select Metrics:"),
@@ -41,7 +43,6 @@ def metrics_layout() -> html.Div:
                 ],
                 style={"marginBottom": "20px"},
             ),
-
             dcc.Graph(id="metrics-plot"),
             html.Div(id="metrics-diff-info"),  # Extra visual feedback
         ],

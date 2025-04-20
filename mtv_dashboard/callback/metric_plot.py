@@ -1,7 +1,11 @@
-import urllib
+import urllib.parse
+from json import JSONDecodeError
 
 import plotly.graph_objects as go
-from dash import Input, Output, callback, html
+import requests
+from dash import Input, Output, State, callback, dash, html
+from dash.exceptions import PreventUpdate
+from fastapi.responses import JSONResponse
 from plotly.basedatatypes import BaseFigure
 
 from mtv_dashboard.utils.consts import API_URL
@@ -9,42 +13,87 @@ from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
 @callback(
-    Output("url", "search", allow_duplicate=True),
+    Output("dashboard-state", "data"),
     Input("metrics-test-dropdown", "value"),
     Input("metrics-checklist", "value"),
-    prevent_initial_call="initial_duplicate",
 )
-def update_url(test_names: list[str], metrics: list[str]) -> str:
-    """Encode selected tests and metrics into URL query string."""
-    query = {
-        "tests": ",".join(test_names) if test_names else "",
-        "metrics": ",".join(metrics) if metrics else "",
+def update_dashboard_state(test_names: list[str], metrics: list[str]) -> dict:
+    """Update dashboard state."""
+    return {
+        "source": "metrics",
+        "tests": test_names,
+        "metrics": metrics,
     }
-    return f"?{urllib.parse.urlencode(query)}"
+
+
+@callback(
+    Output("url", "search", allow_duplicate=True),
+    Output("copy-confirmation", "children"),
+    Input("copy-url-button", "n_clicks"),
+    State("dashboard-state", "data"),
+    prevent_initial_call=True,
+)
+def copy_shareable_link(n_clicks: int, state: dict) -> tuple[str, str]:  # noqa: ARG001
+    """Copy sharable link."""
+    try:
+        response = requests.post("http://localhost:8000/state", json=state, timeout=1000)
+        response.raise_for_status()
+        hash_ = response.json()["state_hash"]
+        url = f"?state={hash_}"
+    except requests.HTTPError as e:
+        return "", f"❌ Error: {e!s}"
+
+    return url, "✅ Link copied!"
+
+
+@callback(
+    Output("dashboard-state", "data", allow_duplicate=True),
+    Input("url", "search"),
+    prevent_initial_call=True,
+)
+def load_state_from_url(search: str) -> JSONResponse:
+    """Load state from url."""
+    if not search or not search.startswith("?state="):
+        raise PreventUpdate
+
+    hash_ = urllib.parse.parse_qs(search.lstrip("?")).get("state", [""])[0]
+    if not hash_:
+        raise PreventUpdate
+
+    try:
+        response = requests.get(f"http://localhost:8000/state/{hash_}", timeout=1000)
+        response.raise_for_status()
+        return response.json()
+    except (requests.HTTPError, JSONDecodeError):
+        return dash.no_update
 
 
 @callback(
     Output("metrics-test-dropdown", "value"),
     Output("metrics-checklist", "value"),
-    Input("url", "search"),
+    Output("state-loaded", "data"),
     Input("metrics-test-dropdown", "options"),
+    State("dashboard-state", "data"),
+    State("state-loaded", "data"),
 )
-def sync_inputs_with_url(search: str, test_options: list[dict]) -> tuple[list[str], list[str]]:
-    """Decode the query string and update filter components."""
-    if not search or not test_options:
-        return [], ["Metric 1"]
+def apply_loaded_state(options: list[dict], state: dict, already_loaded: bool) -> list:  # noqa: FBT001
+    """Apply loaded state."""
+    if not options or not state or already_loaded:
+        raise PreventUpdate
 
-    parsed = urllib.parse.parse_qs(search.lstrip("?"))
-    tests = parsed.get("tests", [""])[0].split(",") if parsed.get("tests") else []
-    metrics = parsed.get("metrics", [""])[0].split(",") if parsed.get("metrics") else []
-    return tests, metrics
+    if state.get("source") != "metrics":
+        raise PreventUpdate
+
+    allowed = {opt["value"] for opt in options}
+    valid_tests = [t for t in state.get("tests", []) if t in allowed]
+    return valid_tests, state.get("metrics", []), True
 
 
 @callback(
     Output("metrics-test-dropdown", "options"),
     Input("metrics-checklist", "id"),
 )
-def populate_metric_test_dropdown(_) -> dict:  # noqa: ANN001
+def populate_metric_test_dropdown(_) -> list[dict]:  # noqa: ANN001
     """Populate metrics tests into dropdown."""
     df = fetch_data_from_api(API_URL)
     unique_names = df["test_name"].dropna().unique()
@@ -57,7 +106,7 @@ def populate_metric_test_dropdown(_) -> dict:  # noqa: ANN001
     Input("metrics-test-dropdown", "value"),
     Input("metrics-checklist", "value"),
 )
-def update_metrics_plot(selected_tests: list[str], selected_metrics: list[str]) -> BaseFigure:
+def update_metrics_plot(selected_tests: list[str], selected_metrics: list[str]) -> tuple[BaseFigure, str]:
     """Update metrics plot for selected tests and metrics."""
     if not selected_tests or not selected_metrics:
         return go.Figure(), ""

@@ -1,12 +1,12 @@
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clipboard: {
-        copyUrlToClipboard: function(n_clicks) {
-            const fullUrl = window.location.href;  // <-- to daje cały URL!
-            if (!fullUrl) return "";
+        copyStateUrlToClipboard: function (url) {
+            if (!url) return "";
+            const fullUrl = window.location.origin + window.location.pathname + url;
             navigator.clipboard.writeText(fullUrl).then(() => {
-                console.log("URL copied:", fullUrl);
+                console.log("Copied to clipboard:", fullUrl);
             });
-            return "✅ URL copied to clipboard!";
+            return "";
         }
     }
 });
