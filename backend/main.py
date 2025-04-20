@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.api.routes.state import router as state_router
 from backend.api.routes.tests import router as tests_router
 from backend.repository.local_state_repository import LocalStateRepository
 from backend.repository.test_csv_repository import TestCSVRepository
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 
 app.include_router(tests_router)
+app.include_router(state_router)
 
 
 @app.websocket("/ws/execution")
