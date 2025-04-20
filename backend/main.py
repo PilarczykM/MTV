@@ -5,6 +5,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.routes.tests import router as tests_router
+from backend.repository.local_state_repository import LocalStateRepository
 from backend.repository.test_csv_repository import TestCSVRepository
 from backend.ws.socket import simulate_shared_tests_stream, websocket_endpoint
 
@@ -13,7 +14,11 @@ from backend.ws.socket import simulate_shared_tests_stream, websocket_endpoint
 async def lifespan(app: FastAPI):  # noqa: ANN201
     """Run lifespan."""
     simulation_task = asyncio.create_task(simulate_shared_tests_stream())
+
+    # Dependency injection
     app.state.test_repository = TestCSVRepository()
+    app.state.state_repository = LocalStateRepository()
+
     yield
     simulation_task.cancel()
     try:
