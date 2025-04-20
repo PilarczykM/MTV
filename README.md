@@ -152,9 +152,11 @@ uv run uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000 & uv run -
 
 ## 🛠️ TODO
 
-- [ ] Connect WebSocket **only** on the home page to reduce overhead.
+- [x] Connect WebSocket **only** on the home page to reduce overhead.
 - [x] Adjust chart dimensions – current layout renders them too small.
 - [x] Add rolling window on homepage. 
 - [ ] Improve sharable link mechanism:
   - [x] **Current:** Populate charts using route path parameters.
   - [ ] **Planned:** Store chart state in a database and generate a short sharable link that maps to saved data.
+    - [x] Add hashable state repository in backend.
+    - [ ] Utilize backend functionality in frontend.
