@@ -8,7 +8,7 @@ from dash.exceptions import PreventUpdate
 from fastapi.responses import JSONResponse
 from plotly.basedatatypes import BaseFigure
 
-from mtv_dashboard.utils.consts import API_URL
+from mtv_dashboard.utils.consts import API_STATE_URL, API_TESTS_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
@@ -36,7 +36,7 @@ def update_dashboard_state(test_names: list[str], metrics: list[str]) -> dict:
 def copy_shareable_link(n_clicks: int, state: dict) -> tuple[str, str]:  # noqa: ARG001
     """Copy sharable link."""
     try:
-        response = requests.post("http://localhost:8000/state", json=state, timeout=1000)
+        response = requests.post(API_STATE_URL, json=state, timeout=1000)
         response.raise_for_status()
         hash_ = response.json()["state_hash"]
         url = f"?state={hash_}"
@@ -61,7 +61,7 @@ def load_state_from_url(search: str) -> JSONResponse:
         raise PreventUpdate
 
     try:
-        response = requests.get(f"http://localhost:8000/state/{hash_}", timeout=1000)
+        response = requests.get(f"{API_STATE_URL}/{hash_}", timeout=1000)
         response.raise_for_status()
         return response.json()
     except (requests.HTTPError, JSONDecodeError):
@@ -95,7 +95,7 @@ def apply_loaded_state(options: list[dict], state: dict, already_loaded: bool) -
 )
 def populate_metric_test_dropdown(_) -> list[dict]:  # noqa: ANN001
     """Populate metrics tests into dropdown."""
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
     unique_names = df["test_name"].dropna().unique()
     return [{"label": name, "value": name} for name in sorted(unique_names)]
 
@@ -111,7 +111,7 @@ def update_metrics_plot(selected_tests: list[str], selected_metrics: list[str]) 
     if not selected_tests or not selected_metrics:
         return go.Figure(), ""
 
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
     test_id_map = df[["test_name", "test_id"]].drop_duplicates().set_index("test_name")["test_id"].to_dict()
     selected_ids = [test_id_map.get(t) for t in selected_tests]
     filtered = df[df["test_id"].isin(selected_ids)]
