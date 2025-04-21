@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from dash import Input, Output, callback
 from plotly.basedatatypes import BaseFigure
 
-from mtv_dashboard.utils.consts import API_URL
+from mtv_dashboard.utils.consts import API_TESTS_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
@@ -46,7 +46,7 @@ def sync_inputs_with_url(search: str, test_options: list[dict]) -> tuple[list[st
 )
 def populate_test_name_dropdown(_) -> list[dict[str, str]]:  # noqa: ANN001
     """Populate the Test Name dropdown with available test names."""
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
     unique_test_names = df["test_name"].dropna().unique()
     return [{"label": name, "value": name} for name in sorted(unique_test_names)]
 
@@ -61,7 +61,7 @@ def update_trace_plot(selected_test_names: list[str], selected_traces: list[str]
     if not selected_test_names or not selected_traces:
         return go.Figure()
 
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
 
     # Build mapping: test_name -> test_id
     test_name_to_id = df[["test_name", "test_id"]].drop_duplicates().set_index("test_name")["test_id"].to_dict()

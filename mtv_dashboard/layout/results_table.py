@@ -2,13 +2,13 @@ import pandas as pd
 from dash import dash_table, dcc, html
 
 from mtv_dashboard.layout.base import create_base_layout
-from mtv_dashboard.utils.consts import API_URL
+from mtv_dashboard.utils.consts import API_TESTS_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
 def results_table_layout() -> html.Div:
     """Return the layout for the results summary table."""
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
     summary = build_test_summary(df)
 
     trace_cols = [col for col in summary.columns if col.startswith("Trace")]
