@@ -18,6 +18,7 @@ This project was created as a prototype to demonstrate key features of a robust 
     - [📈 Metrics Page](#-metrics-page)
     - [🧾 Table Page](#-table-page)
     - [🧾 Charts Below Table View](#-charts-below-table-view)
+    - [Sharable links](#sharable-links)
   - [✨ Key Features](#-key-features)
   - [🔧 Technologies](#-technologies)
   - [🚀 Getting Started](#-getting-started)
@@ -60,6 +61,14 @@ Provides a comprehensive table summarizing test results, including parameters, t
 When one or more tests are selected from the table, their data is visualized directly below, enabling focused analysis of selected results.
 ![Table view](./images/table-view.png)
 
+### Sharable links
+When the user clicks the share button, the backend receives the selected parameters and stores them in the database. In response, a sharable URL is returned.
+
+![Short](./images/URI-short-query.png)
+
+When the user clicks the share button, the current state of the dashboard (filters, selected charts, etc.) is serialized into a long query string, which is appended to the URL. This URL can be shared without any backend storage.
+
+![Long](./images/URI-query-string.png)
 
 ## ✨ Key Features
 
@@ -70,6 +79,8 @@ When one or more tests are selected from the table, their data is visualized dir
 - 🧠 **Dynamic charts** – add/remove metrics and traces on the fly
 - 🔍 **Test parameter filtering**
 - 🔗 **Sharable URLs** with full dashboard state (filters, selections, views)
+  - **Long query string**
+  - **Short query string**
 - 🔁 **Real-time synchronization** with file-based data changes
 - 🧩 Modular architecture: Dash frontend + FastAPI backend
 - 🌐 **REST API** support for fetching data
