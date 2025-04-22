@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import Input, Output, State, callback, dash_table, dcc, html
 
-from mtv_dashboard.utils.consts import API_URL
+from mtv_dashboard.utils.consts import API_TESTS_URL
 from mtv_dashboard.utils.data_fetcher import fetch_data_from_api
 
 
@@ -38,7 +38,7 @@ def display_selected_tests(selected_rows: list[int], visible_data: list[dict]) -
 
     selected_ids = [visible_data[i]["test_id"] for i in selected_rows]
 
-    df = fetch_data_from_api(API_URL)
+    df = fetch_data_from_api(API_TESTS_URL)
     df = df.rename(columns=str.lower)
     filtered_df = df[df["test_id"].isin(selected_ids)]
 
