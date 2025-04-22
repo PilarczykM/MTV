@@ -23,7 +23,7 @@ def create_base_layout(content: Component) -> html.Div:
                                     dcc.Link("Home", href="/", className="nav-link"),
                                     dcc.Link("Trace", href="/trace", className="nav-link"),
                                     dcc.Link("Metric", href="/metric", className="nav-link"),
-                                    dcc.Link("Tabele", href="/result", className="nav-link"),
+                                    dcc.Link("Tables", href="/result", className="nav-link"),
                                 ],
                                 className="header-right",
                             ),
